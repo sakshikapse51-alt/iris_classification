@@ -1,26 +1,66 @@
-from sklearn.datasets import load_iris
-from sklearn.linear_model import LogisticRegression
+import streamlit as st
 import joblib
+import numpy as np
 
-# Load the Iris dataset
-iris = load_iris()
+# Load the trained model
+model = joblib.load("iris_model.pkl")
 
-# Input features:
-# 1. Sepal Length
-# 2. Sepal Width
-# 3. Petal Length
-# 4. Petal Width
-X = iris.data
+# Page configuration
+st.set_page_config(
+    page_title="Iris Flower Prediction",
+    page_icon="🌸",
+    layout="centered"
+)
 
-# Target labels
-y = iris.target
+# Title
+st.title("🌸 Iris Flower Prediction App")
 
-# Create and train the model
-model = LogisticRegression(max_iter=200)
-model.fit(X, y)
+st.header("Enter the measurements of the Iris flower")
 
-# Save the trained model
-joblib.dump(model, "iris_model.pkl")
+# Input measurements
+sepal_length = st.number_input(
+    "Sepal Length (cm)",
+    min_value=0.0,
+    max_value=10.0,
+    value=5.0,
+    step=0.1
+)
 
-print("Model trained successfully!")
-print("iris_model.pkl created successfully!")
+sepal_width = st.number_input(
+    "Sepal Width (cm)",
+    min_value=0.0,
+    max_value=10.0,
+    value=3.0,
+    step=0.1
+)
+
+petal_length = st.number_input(
+    "Petal Length (cm)",
+    min_value=0.0,
+    max_value=10.0,
+    value=4.0,
+    step=0.1
+)
+
+petal_width = st.number_input(
+    "Petal Width (cm)",
+    min_value=0.0,
+    max_value=10.0,
+    value=1.0,
+    step=0.1
+)
+
+# Prediction
+if st.button("Predict Iris Species"):
+    input_data = np.array([
+        [
+            sepal_length,
+            sepal_width,
+            petal_length,
+            petal_width
+        ]
+    ], dtype=np.float64)
+
+    prediction = model.predict(input_data)
+
+    st.success(f"🌸 Predicted Iris species: {prediction[0]}")
